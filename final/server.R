@@ -7,26 +7,19 @@
 #    https://shiny.posit.co/
 #
 
-library(shiny)
-library(StatsBombR)
-
-
-comps <-FreeCompetitions()
-
 # Define server logic required to draw a histogram
 function(input, output, session) {
-
-    output$distPlot <- renderPlot({
-
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-
+    output$distPlot <- renderPlotly({
+        ggplotly(ggplot(data = df,
+                        aes_string(x=input$selector_x,
+                                   y=input$selector_y),
+            text = paste('X:', input$selector_x, '\n',
+                       'Y:', input$selector_y, sep="")) + 
+              geom_point(aes(col= team)) +
+              theme_minimal() +
+              labs(x = input$selector_x,
+                   y = input$selector_y, 
+                   colour="Teams")
+        )
     })
-
 }
